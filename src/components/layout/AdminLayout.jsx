@@ -6,7 +6,7 @@ export default function AdminLayout({ children, title }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex">
+    <div className="min-h-screen bg-[#eef1f7] text-[#1d2333] flex">
       {/* Navigation Sidebar */}
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 

@@ -21,27 +21,27 @@ export default function Modal({ isOpen, onClose, title, subtitle, children, maxW
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop Overlay */}
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-[#0f1730]/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Container */}
       <div
-        className={`relative w-full ${maxWidth} rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150`}
+        className={`relative w-full ${maxWidth} rounded-2xl bg-white border border-[#e3e7ef] shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150 text-[#1d2333]`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#e3e7ef] bg-white">
           <div>
-            <h3 className="text-lg font-extrabold text-white tracking-tight leading-tight">
+            <h3 className="text-lg font-extrabold text-[#1c2847] tracking-tight leading-tight">
               {title}
             </h3>
-            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+            {subtitle && <p className="text-xs text-[#667089] mt-0.5">{subtitle}</p>}
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-full bg-[#f6f7fb] text-slate-500 hover:text-[#1c2847] hover:bg-[#eef1f8] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

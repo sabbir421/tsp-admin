@@ -18,20 +18,20 @@ export default function MatchesPage() {
     {
       header: 'Match ID',
       key: 'id',
-      render: (row) => <span className="font-bold text-white">#MATCH-{row.id}</span>,
+      render: (row) => <span className="font-bold text-[#1c2847]">#MATCH-{row.id}</span>,
     },
     {
       header: 'Requirement Ref',
       key: 'requirementId',
       render: (row) => (
-        <span className="font-semibold text-brand-400">Requirement #{row.requirementId}</span>
+        <span className="font-semibold text-[#f2961d]">Requirement #{row.requirementId}</span>
       ),
     },
     {
       header: 'Matched Property',
       key: 'propertyId',
       render: (row) => (
-        <span className="font-semibold text-blue-400">Property #{row.propertyId}</span>
+        <span className="font-semibold text-[#1c2847]">Property #{row.propertyId}</span>
       ),
     },
     {
@@ -39,9 +39,9 @@ export default function MatchesPage() {
       key: 'status',
       render: (row) => {
         const badgeColors = {
-          pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-          accepted: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-          rejected: 'bg-red-500/10 text-red-400 border-red-500/20',
+          pending: 'bg-[#fff4e5] text-[#f2961d] border-[#fed7aa]',
+          accepted: 'bg-[#e3f6ec] text-[#1f9d63] border-[#a7f3d0]',
+          rejected: 'bg-[#fde8e8] text-[#d64545] border-[#fecaca]',
         };
         return (
           <span className={`px-2.5 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${badgeColors[row.status] || badgeColors.pending}`}>
@@ -54,7 +54,7 @@ export default function MatchesPage() {
       header: 'Site Visit Status',
       key: 'siteVisitStatus',
       render: (row) => (
-        <span className="text-xs font-bold text-slate-300 capitalize">
+        <span className="text-xs font-bold text-[#1d2333] capitalize">
           {row.siteVisitStatus || 'None Scheduled'}
         </span>
       ),
@@ -63,7 +63,7 @@ export default function MatchesPage() {
       header: 'Sent Date',
       key: 'createdAt',
       render: (row) => (
-        <span className="text-xs text-slate-400 font-medium">
+        <span className="text-xs text-[#667089] font-medium">
           {new Date(row.createdAt).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -78,7 +78,7 @@ export default function MatchesPage() {
       render: (row) => (
         <button
           onClick={() => setSelectedMatch(row)}
-          className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+          className="p-1.5 rounded-lg border border-[#e3e7ef] bg-white text-slate-700 hover:text-[#1c2847] hover:bg-[#eef1f8] transition-colors"
           title="View Match Details"
         >
           <Eye className="w-4 h-4" />
@@ -92,10 +92,10 @@ export default function MatchesPage() {
       {/* Header Bar */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[#1c2847] tracking-tight">
             Matches & Site Visits
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#667089] mt-1">
             Track property suggestions sent by sellers to buyers and monitor site visit completions.
           </p>
         </div>
@@ -118,36 +118,36 @@ export default function MatchesPage() {
       >
         {selectedMatch && (
           <div className="space-y-4 text-xs">
-            <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-slate-950/60 border border-slate-800">
+            <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-[#fafbfd] border border-[#e3e7ef]">
               <div>
-                <span className="text-slate-500 font-bold block uppercase text-[10px]">Requirement ID</span>
-                <span className="font-bold text-brand-400 text-sm">#{selectedMatch.requirementId}</span>
+                <span className="text-[#667089] font-bold block uppercase text-[10px]">Requirement ID</span>
+                <span className="font-bold text-[#f2961d] text-sm">#{selectedMatch.requirementId}</span>
               </div>
               <div>
-                <span className="text-slate-500 font-bold block uppercase text-[10px]">Matched Property ID</span>
-                <span className="font-bold text-blue-400 text-sm">#{selectedMatch.propertyId}</span>
+                <span className="text-[#667089] font-bold block uppercase text-[10px]">Matched Property ID</span>
+                <span className="font-bold text-[#1c2847] text-sm">#{selectedMatch.propertyId}</span>
               </div>
               <div>
-                <span className="text-slate-500 font-bold block uppercase text-[10px]">Buyer Acceptance Status</span>
-                <span className="font-bold text-emerald-400 uppercase">{selectedMatch.status}</span>
+                <span className="text-[#667089] font-bold block uppercase text-[10px]">Buyer Acceptance Status</span>
+                <span className="font-bold text-[#1f9d63] uppercase">{selectedMatch.status}</span>
               </div>
               <div>
-                <span className="text-slate-500 font-bold block uppercase text-[10px]">Site Visit Status</span>
-                <span className="font-bold text-slate-200 capitalize">{selectedMatch.siteVisitStatus || 'None'}</span>
+                <span className="text-[#667089] font-bold block uppercase text-[10px]">Site Visit Status</span>
+                <span className="font-bold text-[#1d2333] capitalize">{selectedMatch.siteVisitStatus || 'None'}</span>
               </div>
             </div>
 
             {selectedMatch.sellerNote && (
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <span className="text-xs font-bold text-white block border-b border-slate-800 pb-2">Seller Note to Buyer</span>
-                <p className="text-slate-300">{selectedMatch.sellerNote}</p>
+              <div className="p-4 rounded-xl bg-[#fafbfd] border border-[#e3e7ef] space-y-1">
+                <span className="text-xs font-bold text-[#1c2847] block border-b border-[#e3e7ef] pb-2">Seller Note to Buyer</span>
+                <p className="text-[#1d2333]">{selectedMatch.sellerNote}</p>
               </div>
             )}
 
             <div className="flex justify-end pt-2">
               <button
                 onClick={() => setSelectedMatch(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs"
+                className="px-4 py-2 rounded-xl bg-white border border-[#e3e7ef] hover:bg-[#eef1f8] text-[#1c2847] font-bold text-xs"
               >
                 Close
               </button>

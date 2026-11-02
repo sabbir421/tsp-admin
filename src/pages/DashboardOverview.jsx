@@ -1,203 +1,189 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { fetchDashboardStats } from '../store/slices/dashboardSlice';
-import { updatePropStatus } from '../store/slices/propertiesSlice';
-import KpiCard from '../components/common/KpiCard';
 import {
   Users,
   Building2,
-  ClipboardList,
-  GitCompare,
-  CheckCircle2,
   Clock,
-  UserCheck,
-  CalendarCheck,
-  ArrowUpRight,
-  ShieldAlert,
   ShieldCheck,
+  GitCompare,
+  AlertTriangle,
   RefreshCw,
+  ArrowRight,
+  CheckCircle2,
 } from 'lucide-react';
 
 export default function DashboardOverview() {
   const dispatch = useDispatch();
-  const { metrics, recentActivities, loading, error } = useSelector((state) => state.dashboard);
+  const { metrics, recentActivities, loading } = useSelector((state) => state.dashboard);
 
   useEffect(() => {
     dispatch(fetchDashboardStats());
   }, [dispatch]);
 
-  const handleQuickApprove = async (id) => {
-    await dispatch(updatePropStatus({ id, status: 'verified' }));
-    dispatch(fetchDashboardStats());
-  };
+  const pendingProps = metrics?.pendingProperties || 0;
+  const verifiedProps = metrics?.verifiedProperties || 0;
+  const totalProps = metrics?.totalProperties || 0;
+  const totalUsers = metrics?.totalUsers || 0;
+  const totalReqs = metrics?.totalRequirements || 0;
+  const totalMatches = metrics?.totalMatches || 0;
+  const totalOtps = metrics?.totalOtps || 0;
+
+  const activities = [];
+  if (recentActivities?.properties && Array.isArray(recentActivities.properties)) {
+    recentActivities.properties.forEach((p) => {
+      activities.push({
+        text: `Property: ${p.title || `Property #${p.id}`} (${p.propertyType || 'Apartment'}) listed`,
+        time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Recent',
+      });
+    });
+  }
+  if (recentActivities?.requirements && Array.isArray(recentActivities.requirements)) {
+    recentActivities.requirements.forEach((r) => {
+      activities.push({
+        text: `Requirement #${r.id} (${r.subType || r.category}) posted`,
+        time: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'Recent',
+      });
+    });
+  }
+  if (recentActivities?.matches && Array.isArray(recentActivities.matches)) {
+    recentActivities.matches.forEach((m) => {
+      activities.push({
+        text: `Match/Suggestion created for property #${m.propertyId}`,
+        time: m.createdAt ? new Date(m.createdAt).toLocaleDateString() : 'Recent',
+      });
+    });
+  }
 
   return (
     <div className="space-y-6">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#e3e7ef] shadow-sm">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-[#1c2847] tracking-tight">
             Executive Control Center
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Real-time analytics, property verification queue, user directory overview, and system metrics.
+          <p className="text-sm text-[#667089] mt-1">
+            Dhaka City overview · Live platform statistics and actionable review queues.
           </p>
         </div>
 
         <button
           onClick={() => dispatch(fetchDashboardStats())}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 border border-slate-700 transition-all self-start sm:self-auto"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#f6f7fb] hover:bg-[#eef1f8] border border-[#e3e7ef] text-xs font-bold text-[#1c2847] transition-all self-start sm:self-auto shadow-sm"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>Refresh Data</span>
         </button>
       </div>
 
-      {error && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
-          {error}
+      {/* 6 KPI TILES */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="bg-white p-4 rounded-xl border border-[#e3e7ef] shadow-sm">
+          <b className="text-2xl font-extrabold text-[#1c2847] block">{totalUsers}</b>
+          <span className="text-xs text-[#667089] font-medium">Registered users</span>
+          <span className="block text-[10px] text-[#1f9d63] font-semibold mt-1">Live accounts</span>
         </div>
-      )}
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard
-          title="Total Registered Users"
-          value={metrics.totalUsers}
-          subtext={`${metrics.totalSellers} Sellers/Agents · ${metrics.totalBuyers} Buyers/Tenants`}
-          icon={Users}
-          color="brand"
-          trend="+12% this month"
-        />
-        <KpiCard
-          title="Total Properties Listed"
-          value={metrics.totalProperties}
-          subtext={`${metrics.verifiedProperties} Verified · ${metrics.pendingProperties} Pending`}
-          icon={Building2}
-          color="emerald"
-          trend={`${metrics.pendingProperties} Action Required`}
-        />
-        <KpiCard
-          title="Active Requirements"
-          value={metrics.totalRequirements}
-          subtext="Submitted by active buyers & tenants"
-          icon={ClipboardList}
-          color="blue"
-          trend="Live Feed"
-        />
-        <KpiCard
-          title="Matches & Site Visits"
-          value={metrics.totalMatches}
-          subtext={`${metrics.acceptedMatches} Matches Accepted · ${metrics.completedVisits} Visits Completed`}
-          icon={GitCompare}
-          color="purple"
-          trend="High Conversion"
-        />
+        <div className="bg-white p-4 rounded-xl border border-[#e3e7ef] shadow-sm">
+          <b className="text-2xl font-extrabold text-[#1c2847] block">{verifiedProps}</b>
+          <span className="text-xs text-[#667089] font-medium">Live listings</span>
+          <span className="block text-[10px] text-[#667089] font-semibold mt-1">Total: {totalProps}</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-[#e3e7ef] shadow-sm">
+          <b className="text-2xl font-extrabold text-[#f2961d] block">{pendingProps}</b>
+          <span className="text-xs text-[#667089] font-medium">Listings to approve</span>
+          <Link to="/properties" className="block text-[10px] text-[#f2961d] font-semibold mt-1 hover:underline">
+            Review queue →
+          </Link>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-[#e3e7ef] shadow-sm">
+          <b className="text-2xl font-extrabold text-blue-600 block">{totalReqs}</b>
+          <span className="text-xs text-[#667089] font-medium">Buyer requirements</span>
+          <Link to="/requirements" className="block text-[10px] text-blue-600 font-semibold mt-1 hover:underline">
+            View requirements →
+          </Link>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-[#e3e7ef] shadow-sm">
+          <b className="text-2xl font-extrabold text-[#1c2847] block">{totalMatches}</b>
+          <span className="text-xs text-[#667089] font-medium">Match suggestions</span>
+          <Link to="/matches" className="block text-[10px] text-[#1f9d63] font-semibold mt-1 hover:underline">
+            Review matches →
+          </Link>
+        </div>
+
+        <div className="bg-white p-4 rounded-xl border border-[#e3e7ef] shadow-sm">
+          <b className="text-2xl font-extrabold text-[#d64545] block">{totalOtps}</b>
+          <span className="text-xs text-[#667089] font-medium">OTP verifications</span>
+          <Link to="/otp-logs" className="block text-[10px] text-[#d64545] font-semibold mt-1 hover:underline">
+            Audit logs →
+          </Link>
+        </div>
       </div>
 
-      {/* Actionable Queue: Pending Verifications */}
-      {metrics.pendingProperties > 0 && (
-        <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <ShieldAlert className="w-5 h-5 text-amber-400" />
-              <h3 className="font-extrabold text-sm text-white">
-                {metrics.pendingProperties} Property Listings Awaiting Admin Verification
-              </h3>
-            </div>
-            <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs border border-amber-500/40">
-              High Priority
-            </span>
-          </div>
-          <p className="text-xs text-slate-300 mb-4">
-            Review and approve pending properties to make them publicly visible in the browse feed and available for matching.
-          </p>
-        </div>
-      )}
-
-      {/* Two Column Layout: Recent Activities & Quick Metrics */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Feed: Recent Properties */}
-        <div className="lg:col-span-2 rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-brand-500" />
-              <span>Recent Property Submissions</span>
-            </h3>
-            <span className="text-xs text-slate-500 font-medium">Last 5 Listings</span>
+      {/* ACTIONABLE QUEUES ROW */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* NEEDS ATTENTION */}
+        <div className="bg-white rounded-2xl border border-[#e3e7ef] shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-[#e3e7ef] font-bold text-sm text-[#1c2847] flex justify-between items-center">
+            <span>Needs Attention</span>
+            {pendingProps > 0 && (
+              <span className="text-xs text-[#f2961d] font-semibold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                Action required
+              </span>
+            )}
           </div>
 
-          <div className="space-y-3">
-            {recentActivities.properties.length === 0 ? (
-              <p className="text-xs text-slate-500 text-center py-6">No recent properties listed</p>
-            ) : (
-              recentActivities.properties.map((prop) => (
-                <div
-                  key={prop.id}
-                  className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between gap-4 hover:border-slate-700 transition-colors"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-white truncate">{prop.title}</span>
-                      <span
-                        className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                          prop.status === 'verified'
-                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                        }`}
-                      >
-                        {prop.status}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 truncate mt-0.5">
-                      {prop.propertyFor === 'rent' ? 'For Rent' : 'For Sale'} · {prop.sector || prop.area}, {prop.city} · ৳{Number(prop.price).toLocaleString()}
-                    </p>
-                  </div>
-
-                  {prop.status === 'pending' && (
-                    <button
-                      onClick={() => handleQuickApprove(prop.id)}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs shadow-md shadow-emerald-500/20 flex items-center gap-1 shrink-0 transition-all"
-                    >
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>Approve</span>
-                    </button>
-                  )}
+          <div className="divide-y divide-[#e3e7ef]">
+            {pendingProps > 0 ? (
+              <div className="p-4 flex items-center justify-between gap-4 hover:bg-[#f6f7fb] transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#f2961d]" />
+                  <span className="text-xs font-semibold text-[#1d2333]">
+                    {pendingProps} property listing{pendingProps > 1 ? 's' : ''} waiting for verification approval
+                  </span>
                 </div>
-              ))
+                <Link
+                  to="/properties"
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#f2961d] text-white hover:bg-[#d97f0a] shadow-sm transition-colors whitespace-nowrap"
+                >
+                  Review listings
+                </Link>
+              </div>
+            ) : (
+              <div className="p-8 text-center text-xs text-[#667089]">
+                <CheckCircle2 className="w-8 h-8 text-[#1f9d63] mx-auto mb-2 opacity-80" />
+                <p className="font-semibold text-[#1c2847]">Review queues are clean</p>
+                <p className="mt-1">No property listings or moderation items pending admin action.</p>
+              </div>
             )}
           </div>
         </div>
 
-        {/* System Health & Requirement Stream */}
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <ClipboardList className="w-4 h-4 text-blue-400" />
-              <span>Latest Buyer Requirements</span>
-            </h3>
+        {/* RECENT ACTIVITY */}
+        <div className="bg-white rounded-2xl border border-[#e3e7ef] shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-[#e3e7ef] font-bold text-sm text-[#1c2847]">
+            Recent Activity Stream
           </div>
 
-          <div className="space-y-3">
-            {recentActivities.requirements.length === 0 ? (
-              <p className="text-xs text-slate-500 text-center py-6">No recent buyer requirements</p>
-            ) : (
-              recentActivities.requirements.map((req) => (
-                <div
-                  key={req.id}
-                  className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1"
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-slate-200">{req.title || 'Property Requirement'}</span>
-                    <span className="text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded border border-brand-500/20">
-                      {req.category}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-400">
-                    Budget: {req.maxBudget ? `৳${Number(req.maxBudget).toLocaleString()}` : 'Flexible'} · {req.area || req.city}
-                  </p>
+          <div className="divide-y divide-[#e3e7ef]">
+            {activities.length > 0 ? (
+              activities.map((act, idx) => (
+                <div key={idx} className="p-4 flex items-center justify-between text-xs hover:bg-[#f6f7fb] transition-colors">
+                  <span className="text-[#1d2333] font-medium">{act.text}</span>
+                  <span className="text-[#667089] font-semibold whitespace-nowrap ml-2">{act.time}</span>
                 </div>
               ))
+            ) : (
+              <div className="p-8 text-center text-xs text-[#667089]">
+                <Clock className="w-8 h-8 text-slate-400 mx-auto mb-2 opacity-60" />
+                <p className="font-semibold text-[#1c2847]">No recent activity yet</p>
+                <p className="mt-1">Real events like listings, requirements, and suggestions will stream here.</p>
+              </div>
             )}
           </div>
         </div>

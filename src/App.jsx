@@ -11,6 +11,12 @@ import MatchesPage from './pages/MatchesPage';
 import OtpLogsPage from './pages/OtpLogsPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import SettingsPage from './pages/SettingsPage';
+import ReportsPage from './pages/ReportsPage';
+import ContentPage from './pages/ContentPage';
+import ResearchPage from './pages/ResearchPage';
+import ActivityLogPage from './pages/ActivityLogPage';
+import SuggestionsPage from './pages/SuggestionsPage';
+import BadgesPage from './pages/BadgesPage';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -65,11 +71,33 @@ export default function App() {
         />
 
         <Route
+          path="/badges"
+          element={
+            <ProtectedRoute>
+              <PageTitleWrapper title="Verification Badges & Certificates Queue">
+                <BadgesPage />
+              </PageTitleWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/requirements"
           element={
             <ProtectedRoute>
               <PageTitleWrapper title="Buyer & Tenant Requirements Feed">
                 <RequirementsPage />
+              </PageTitleWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/suggestions"
+          element={
+            <ProtectedRoute>
+              <PageTitleWrapper title="Property Suggestions to Buyers">
+                <SuggestionsPage />
               </PageTitleWrapper>
             </ProtectedRoute>
           }
@@ -87,11 +115,55 @@ export default function App() {
         />
 
         <Route
+          path="/research"
+          element={
+            <ProtectedRoute>
+              <PageTitleWrapper title="Market Research & Analytics Engine">
+                <ResearchPage />
+              </PageTitleWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/activity-log"
+          element={
+            <ProtectedRoute>
+              <PageTitleWrapper title="Activity Log & Audit Trail">
+                <ActivityLogPage />
+              </PageTitleWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/otp-logs"
           element={
             <ProtectedRoute>
               <PageTitleWrapper title="OTP & SMS Delivery Audit Logs">
                 <OtpLogsPage />
+              </PageTitleWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <PageTitleWrapper title="Reports & Moderation Queue">
+                <ReportsPage />
+              </PageTitleWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/content"
+          element={
+            <ProtectedRoute>
+              <PageTitleWrapper title="Content (Blog & SEO) Management">
+                <ContentPage />
               </PageTitleWrapper>
             </ProtectedRoute>
           }
