@@ -61,7 +61,7 @@ export default function AdminUsersPage() {
   };
 
   const handleDeleteAdmin = async (admin) => {
-    if (admin.id === 999999 || admin.role === 'super_admin') {
+    if (admin.role === 'super_admin') {
       alert('Primary root super admin account cannot be deleted.');
       return;
     }
@@ -140,7 +140,7 @@ export default function AdminUsersPage() {
       key: 'actions',
       render: (row) => (
         <div>
-          {row.id !== 999999 && row.role !== 'super_admin' ? (
+          {row.role !== 'super_admin' ? (
             <button
               onClick={() => handleDeleteAdmin(row)}
               className="p-1.5 rounded-lg border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors"

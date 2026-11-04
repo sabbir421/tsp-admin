@@ -104,16 +104,6 @@ export default function Sidebar({ mobileOpen, onClose }) {
           <ExternalLink className="w-3.5 h-3.5" />
         </a>
 
-        <a
-          href="http://localhost:3000/role"
-          target="_blank"
-          rel="noreferrer"
-          className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#b9c2da] hover:text-white hover:bg-white/10 transition-colors"
-        >
-          <span>Switch Demo Role</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
-
         <button
           onClick={() => dispatch(logout())}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-rose-300 hover:text-rose-200 hover:bg-rose-500/10 transition-colors"

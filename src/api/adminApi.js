@@ -19,6 +19,12 @@ async function request(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   const data = await response.json();
 
+  if ((response.status === 401 || response.status === 403) && endpoint !== "/admin/login") {
+    localStorage.removeItem("tsp_admin_token");
+    localStorage.removeItem("tsp_admin_user");
+    window.location.replace("/login");
+  }
+
   if (!response.ok) {
     throw new Error(data.message || "API request failed");
   }
