@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Menu, Search, Bell, Shield, User, LogOut, CheckCircle2 } from 'lucide-react';
 import { logout } from '../../store/slices/authSlice';
 
-export default function Header({ onMenuClick, title = 'Overview Dashboard' }) {
+export default function Header({ onMenuClick, menuOpen = false, title = 'Overview Dashboard' }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [userDropdown, setUserDropdown] = useState(false);
@@ -11,21 +11,24 @@ export default function Header({ onMenuClick, title = 'Overview Dashboard' }) {
   return (
     <header className="h-16 border-b border-[#e3e7ef] bg-white sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 shadow-sm">
       {/* Left Title & Mobile Hamburger */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0">
         <button
+          type="button"
+          aria-label="Open menu"
+          aria-expanded={menuOpen}
           onClick={onMenuClick}
-          className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 md:hidden"
+          className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 lg:hidden"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <h2 className="text-lg font-bold text-[#1c2847] tracking-tight hidden sm:block">
+        <h2 className="text-base sm:text-lg font-bold text-[#1c2847] tracking-tight truncate max-w-[52vw] sm:max-w-none">
           {title}
         </h2>
       </div>
 
       {/* Center Search Simulation */}
-      <div className="flex-1 max-w-md mx-4 hidden md:block">
+      <div className="flex-1 max-w-md mx-4 hidden xl:block">
         <div className="relative">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -37,8 +40,8 @@ export default function Header({ onMenuClick, title = 'Overview Dashboard' }) {
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
           <CheckCircle2 className="w-3.5 h-3.5" />
           <span>System Healthy</span>
         </div>

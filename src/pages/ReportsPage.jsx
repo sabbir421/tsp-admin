@@ -15,7 +15,7 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#e3e7ef] shadow-sm">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#e3e7ef] shadow-sm">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-[#1c2847] tracking-tight">
             Reports & Moderation Queue

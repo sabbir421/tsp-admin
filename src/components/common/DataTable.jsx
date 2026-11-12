@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Search, ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
 
+const getRowKey = (row, idx) =>
+    row.userRole && row.id ? `${row.userRole}-${row.id}` : row.id ? `item-${row.id}` : `row-${idx}`;
+
 export default function DataTable({
   columns = [],
   data = [],
@@ -45,13 +48,55 @@ export default function DataTable({
         {actions && <div className="flex items-center gap-2 w-full sm:w-auto">{actions}</div>}
       </div>
 
+      {/* Phone layout: one card per row, so every column (including actions) stays reachable */}
+      <div className="xl:hidden">
+        {loading ? (
+          <div className="px-6 py-12 flex flex-col items-center justify-center gap-3">
+            <div className="w-7 h-7 border-2 border-[#f2961d] border-t-transparent rounded-full animate-spin"></div>
+            <span className="font-medium text-xs text-slate-500">Loading data...</span>
+          </div>
+        ) : paginatedData.length === 0 ? (
+          <div className="px-6 py-12 flex flex-col items-center justify-center gap-2 text-center">
+            <Inbox className="w-8 h-8 text-slate-400" />
+            <span className="font-semibold text-xs text-slate-600">{emptyMessage}</span>
+          </div>
+        ) : (
+          <ul className="divide-y divide-[#e3e7ef]">
+            {paginatedData.map((row, idx) => {
+              const [first, ...rest] = columns;
+              const isActions = (col) => /^actions?$/i.test(col.header || '') || col.key === 'actions';
+              const details = rest.filter((col) => !isActions(col));
+              const actionCols = rest.filter(isActions);
+              return (
+                <li key={getRowKey(row, idx)} className="p-4 text-xs text-[#1d2333]">
+                  {first && <div className="min-w-0 mb-3">{first.render ? first.render(row) : row[first.key]}</div>}
+                  <dl className="grid grid-cols-[minmax(84px,auto)_1fr] gap-x-3 gap-y-2 items-start">
+                    {details.map((col) => (
+                      <React.Fragment key={col.key || col.header}>
+                        <dt className="text-[10.5px] font-semibold uppercase tracking-wider text-[#667089] pt-0.5">{col.header}</dt>
+                        <dd className="min-w-0 break-words">{col.render ? col.render(row) : row[col.key]}</dd>
+                      </React.Fragment>
+                    ))}
+                  </dl>
+                  {actionCols.map((col) => (
+                    <div key={col.key || col.header} className="mt-3 pt-3 border-t border-dashed border-[#e3e7ef] flex flex-wrap gap-2">
+                      {col.render ? col.render(row) : row[col.key]}
+                    </div>
+                  ))}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
       {/* Table Container */}
-      <div className="overflow-x-auto">
+      <div className="hidden xl:block overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="bg-[#fafbfd] border-b border-[#e3e7ef] text-[#667089] uppercase tracking-wider text-[11px] font-semibold">
             <tr>
               {columns.map((col) => (
-                <th key={col.key || col.header} className="px-5 py-3.5">
+                <th key={col.key || col.header} className="px-3.5 2xl:px-5 py-3.5">
                   {col.header}
                 </th>
               ))}
@@ -79,17 +124,11 @@ export default function DataTable({
             ) : (
               paginatedData.map((row, idx) => (
                 <tr
-                  key={
-                    row.userRole && row.id
-                      ? `${row.userRole}-${row.id}`
-                      : row.id
-                      ? `item-${row.id}`
-                      : `row-${idx}`
-                  }
+                  key={getRowKey(row, idx)}
                   className="hover:bg-[#f8fafd] transition-colors"
                 >
                   {columns.map((col) => (
-                    <td key={col.key || col.header} className="px-5 py-4 whitespace-nowrap">
+                    <td key={col.key || col.header} className="px-3.5 2xl:px-5 py-4 whitespace-nowrap">
                       {col.render ? col.render(row) : row[col.key]}
                     </td>
                   ))}
@@ -101,7 +140,7 @@ export default function DataTable({
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-4 border-t border-[#e3e7ef] flex items-center justify-between text-xs text-[#667089] bg-white">
+      <div className="p-4 border-t border-[#e3e7ef] flex flex-wrap items-center justify-between gap-3 text-xs text-[#667089] bg-white">
         <div>
           Showing <span className="font-bold text-[#1c2847]">{filteredData.length > 0 ? (page - 1) * pageSize + 1 : 0}</span> to{' '}
           <span className="font-bold text-[#1c2847]">{Math.min(page * pageSize, filteredData.length)}</span> of{' '}

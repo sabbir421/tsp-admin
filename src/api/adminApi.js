@@ -1,7 +1,7 @@
+// VITE_API_URL overrides; otherwise local API in dev, live API in production builds
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
-  "http://localhost:8000/api" ||
-  "https://api.truespaceproperty.com/api";
+  (import.meta.env.DEV ? "http://localhost:8000/api" : "https://api.truespaceproperty.com/api");
 
 async function request(endpoint, options = {}) {
   const token = localStorage.getItem("tsp_admin_token");
